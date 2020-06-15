@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.nullValue;
 import com.connexta.replication.adapters.ddf.csw.Constants;
 import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.data.MetadataImpl;
+import com.connexta.replication.data.QueryRequestImpl;
 import com.connexta.replication.data.ResourceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sakserv.minicluster.impl.HdfsLocalCluster;
@@ -33,8 +34,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,13 +48,19 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.codice.ditto.replication.api.ReplicationException;
 import org.codice.ditto.replication.api.data.CreateStorageRequest;
 import org.codice.ditto.replication.api.data.Metadata;
+import org.codice.ditto.replication.api.data.QueryRequest;
+import org.codice.ditto.replication.api.data.QueryResponse;
 import org.codice.ditto.replication.api.data.Resource;
 import org.codice.ditto.replication.api.data.ResourceRequest;
 import org.codice.ditto.replication.api.data.ResourceResponse;
@@ -115,6 +127,44 @@ public class WebHdfsClientTest {
   public void testStoppedClusterIsNotAvailable() throws Exception {
     hdfsLocalCluster.stop();
     adapter.isAvailable();
+  }
+
+  @Test
+  public void testQuery() throws IOException, URISyntaxException {
+
+    try {
+      QueryRequest queryRequest = new QueryRequestImpl(null, Collections.emptyList(), Collections.emptyList(), new Date());
+
+      createLocalSampleFile("testFile1.txt");
+
+      putFileOnLocalHdfs("testFile1.txt");
+
+      QueryResponse queryResponse = adapter.query(queryRequest);
+
+//      verifyFileExists("testFile1.txt");
+
+
+//      assert putDirOnLocalHdfs("testDir");
+
+//      String location = adapter.sendHttpRequest(httpPut3, new ResponseHandler<Boolean>() {
+//        @Override
+//        public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+//          return response.getFirstHeader("Location").getValue();
+//        }
+//      });
+
+    } catch (IOException | URISyntaxException e) {
+      assert false;
+    } finally {
+      deleteLocalSampleEntity("testFile1.txt");
+//      deleteSampleEntity("testDir");
+      deleteFromHdfs("testFile1.txt");
+
+//      verifyFileExists("testFile1.txt");
+    }
+
+
+
   }
 
   @Test
@@ -378,6 +428,88 @@ public class WebHdfsClientTest {
     // TODO - figure out a good way to track error messages in the logger
   }
 
+  private void createLocalSampleFile(String filename) throws IOException {
+    List<String> content = Collections.singletonList("This is the content of sample file " + filename);
+    Path file = Paths.get(filename);
+    Files.write(file, content, StandardCharsets.UTF_8);
+  }
+
+  private void createSampleDir(String dirName) throws IOException {
+    Path dirPath = Paths.get(dirName);
+    Files.createDirectory(dirPath);
+  }
+
+  private void deleteLocalSampleEntity(String entityName) throws IOException {
+    Path entity = Paths.get(entityName);
+    Files.deleteIfExists(entity);
+  }
+
+  /**
+   * PUTs a local file onto the local HDFS instance; if PUT of the file fails, the test will be failed
+   *
+   * @param filename  the name of the file to PUT
+   * @throws URISyntaxException if URI is invalid
+   */
+  private void putFileOnLocalHdfs(String filename) throws URISyntaxException {
+    // get location for file
+    String fileUri = String.format("%s/%s", BASE_URL, filename);
+    URIBuilder uriBuilder = new URIBuilder(fileUri);
+    uriBuilder
+            .setParameter("op", "CREATE")
+            .setParameter("noredirect", "true");
+    HttpPut httpPut = new HttpPut(uriBuilder.build());
+
+    String location = adapter.sendHttpRequest(httpPut, new ResponseHandler<String>() {
+      @Override
+      public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+        return response.getFirstHeader("Location").getValue();
+      }
+    });
+
+    // write the file to the location returned by the first command
+    uriBuilder = new URIBuilder(location);
+    uriBuilder.setParameter("overwrite", "false");
+    httpPut = new HttpPut(uriBuilder.build());
+
+    assert adapter.sendHttpRequest(httpPut, new ResponseHandler<Boolean>() {
+      @Override
+      public Boolean handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+        return response.getStatusLine().getStatusCode() == 201;
+      }
+    });
+  }
+
+  /**
+   *
+   *
+   * @param dirName
+   * @throws URISyntaxException
+   */
+  private void putDirOnLocalHdfs(String dirName) throws URISyntaxException {
+    // make an empty directory
+    String dirUri = String.format("%s/%s", BASE_URL, dirName);
+    URIBuilder uriBuilder = new URIBuilder(dirUri);
+    uriBuilder.setParameter("op", "MKDIRS");
+    HttpPut httpPut = new HttpPut(uriBuilder.build());
+
+    assert (Boolean) sendHttpRequest(httpPut).get("boolean");
+  }
+
+  /**
+   *
+   *
+   * @param entityName
+   * @throws URISyntaxException
+   */
+  private void deleteFromHdfs(String entityName) throws URISyntaxException {
+    String entityUri = String.format("%s/%s", BASE_URL, entityName);
+    URIBuilder uriBuilder = new URIBuilder(entityUri);
+    uriBuilder.setParameter("op", "DELETE");
+    HttpDelete httpDelete = new HttpDelete(uriBuilder.build());
+
+    assert (Boolean) sendHttpRequest(httpDelete).get("boolean");
+  }
+
   /**
    * Formats a resource name in the way it's stored in HDFS.
    *
@@ -402,7 +534,7 @@ public class WebHdfsClientTest {
     builder.addParameter("op", "GETFILESTATUS");
     URI uri = builder.build();
     HttpGet getRequest = new HttpGet(uri);
-    Map responseContent = sendGetRequest(getRequest);
+    Map responseContent = sendHttpRequest(getRequest);
     Map fileStatus = null;
 
     if (responseContent != null && responseContent.get("FileStatus") instanceof Map) {
@@ -417,6 +549,29 @@ public class WebHdfsClientTest {
                 "http://localhost:%s/webhdfs/v1/%s?op=GETFILESTATUS", HDFS_PORT, filename)));
     assertThat(fileStatus, notNullValue());
     assertThat(fileStatus.get("type"), is("FILE"));
+  }
+
+  private void verifyDirExists(String dirName) throws URISyntaxException {
+    String url = String.format("%s/%s", BASE_URL, dirName);
+    URIBuilder builder = new URIBuilder(url);
+    builder.addParameter("op", "GETFILESTATUS");
+    URI uri = builder.build();
+    HttpGet getRequest = new HttpGet(uri);
+    Map responseContent = sendHttpRequest(getRequest);
+    Map dirStatus = null;
+
+    if (responseContent != null && responseContent.get("FileStatus") instanceof Map) {
+      dirStatus = (Map) responseContent.get("FileStatus");
+    }
+
+    assertThat(hdfsLocalCluster.getHdfsFormat(), is(true));
+    assertThat(
+            uri.toString(),
+            is(
+                    String.format(
+                            "http://localhost:%s/webhdfs/v1/%s?op=GETFILESTATUS", HDFS_PORT, dirName)));
+    assertThat(dirStatus, notNullValue());
+    assertThat(dirStatus.get("type"), is("DIRECTORY"));
   }
 
   /**
@@ -493,12 +648,12 @@ public class WebHdfsClientTest {
   }
 
   /**
-   * Sends a GET request and returns a {@link Map} representing the parsed response content.
+   * Sends an HTTP request and returns a {@link Map} representing the parsed response content.
    *
    * @param request - the request to send
    * @return The {@link Map} containing the parsed content
    */
-  private Map sendGetRequest(HttpRequestBase request) {
+  private Map sendHttpRequest(HttpRequestBase request) { //
     ResponseHandler<Map> responseHandler =
         httpResponse -> {
           InputStream contentStream = httpResponse.getEntity().getContent();
