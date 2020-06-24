@@ -18,5 +18,6 @@
   <modules>
     <module>ddf-adapter</module>
     <module>ion-adapter</module>
+    <module>webhdfs-adapter</module>
   </modules>
 </project>

@@ -24,6 +24,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.connexta.replication.adapters</groupId>
+      <artifactId>webhdfs-adapter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.connexta.replication</groupId>
       <artifactId>replication-api</artifactId>
       <version>${project.version}</version>
