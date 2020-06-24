@@ -12,5 +12,12 @@
     <artifactId>webhdfs-adapter</artifactId>
     <name>Replication :: Adapters :: webHDFS</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.connexta.replication</groupId>
+            <artifactId>replication-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
