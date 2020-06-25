@@ -24,11 +24,39 @@ import com.connexta.replication.api.data.ResourceRequest;
 import com.connexta.replication.api.data.ResourceResponse;
 import com.connexta.replication.api.data.UpdateRequest;
 import com.connexta.replication.api.data.UpdateStorageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestOperations;
 
 import java.io.IOException;
+import java.net.URL;
 
+/** Interacts with a remote Hadoop instance through the webHDFS REST API */
 public class WebHdfsNodeAdapter implements NodeAdapter {
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebHdfsNodeAdapter.class);
+
+    /**
+     * The address of the REST API for the Hadoop instance
+     */
+    private final URL webHdfsUrl;
+
+    /**
+     * Interface defining a basic set of RESTful operations
+     */
+    private final RestOperations restOperations;
+
+    /**
+     * Adapter to interact with a Hadoop instance through the webHDFS REST API
+     *
+     * @param webHdfsUrl the address of the REST API for the Hadoop instance
+     * @param restOperations an interface defining a basic set of RESTful operations
+     */
+    public WebHdfsNodeAdapter(URL webHdfsUrl, RestOperations restOperations) {
+        this.webHdfsUrl = webHdfsUrl;
+        this.restOperations = restOperations;
+    }
+
     @Override
     public boolean isAvailable() {
         return false;
