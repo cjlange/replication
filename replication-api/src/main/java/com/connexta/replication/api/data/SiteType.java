@@ -17,6 +17,7 @@ package com.connexta.replication.api.data;
 public enum SiteType {
   DDF(true),
   ION(false),
+  HDFS(true),
 
   /**
    * The unknown value is used for forward compatibility where the current code might not be able to
