@@ -13,13 +13,16 @@
  */
 package com.connexta.replication.adapters.webhdfs;
 
+import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.NodeAdapter;
 import com.connexta.replication.api.NodeAdapterFactory;
 import com.connexta.replication.api.data.SiteType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -28,6 +31,8 @@ import java.net.URL;
 public class WebHdfsNodeAdapterFactory implements NodeAdapterFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(WebHdfsNodeAdapterFactory.class);
+
+  private static final int HTTPS_PORT = 443;
 
   /**
    * Factory used to create HTTP request objects
@@ -63,11 +68,23 @@ public class WebHdfsNodeAdapterFactory implements NodeAdapterFactory {
 
   @Override
   public NodeAdapter create(URL url) {
-    return null;
+    String protocol = url.getPort() == HTTPS_PORT ? "https://" : "http://";
+    String baseUrl = protocol + url.getHost() + ":" + url.getPort() + url.getPath();
+
+    try {
+      RestTemplate template = new RestTemplate();
+      requestFactory.setBufferRequestBody(false);
+      requestFactory.setConnectTimeout(connectionTimeout);
+      requestFactory.setReadTimeout(receiveTimeout);
+      template.setRequestFactory(requestFactory);
+      return new WebHdfsNodeAdapter(new URL(baseUrl), template);
+    } catch (MalformedURLException e) {
+      throw new AdapterException("Failed to create adapter", e);
+    }
   }
 
   @Override
   public SiteType getType() {
-    return null;
+    return SiteType.HDFS;
   }
 }
