@@ -17,36 +17,27 @@ import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.NodeAdapter;
 import com.connexta.replication.api.NodeAdapterFactory;
 import com.connexta.replication.api.data.SiteType;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-/**
- * Factory for creating {@link WebHdfsNodeAdapter} instances
- */
+/** Factory for creating {@link WebHdfsNodeAdapter} instances */
 public class WebHdfsNodeAdapterFactory implements NodeAdapterFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(WebHdfsNodeAdapterFactory.class);
 
   private static final int HTTPS_PORT = 443;
 
-  /**
-   * Factory used to create HTTP request objects
-   */
+  /** Factory used to create HTTP request objects */
   private final SimpleClientHttpRequestFactory requestFactory;
 
-  /**
-   * The connection timeout for any clients created by this factory
-   */
+  /** The connection timeout for any clients created by this factory */
   private final int connectionTimeout;
 
-  /**
-   * The receive timeout for any clients created by this factory
-   */
+  /** The receive timeout for any clients created by this factory */
   private final int receiveTimeout;
 
   /**
@@ -56,14 +47,15 @@ public class WebHdfsNodeAdapterFactory implements NodeAdapterFactory {
    * @param connectionTimeout the connection timeout for any clients created by this factory
    * @param receiveTimeout the receive timeout for any clients created by this factory
    */
-  public WebHdfsNodeAdapterFactory(SimpleClientHttpRequestFactory requestFactory, int connectionTimeout, int receiveTimeout) {
+  public WebHdfsNodeAdapterFactory(
+      SimpleClientHttpRequestFactory requestFactory, int connectionTimeout, int receiveTimeout) {
     this.requestFactory = requestFactory;
     this.connectionTimeout = connectionTimeout;
     this.receiveTimeout = receiveTimeout;
     LOGGER.debug(
-            "Created a WebHdfsNodeAdapterFactory with a connection timeout of {}ms and a receive timeout of {}ms",
-            connectionTimeout,
-            receiveTimeout);
+        "Created a WebHdfsNodeAdapterFactory with a connection timeout of {}ms and a receive timeout of {}ms",
+        connectionTimeout,
+        receiveTimeout);
   }
 
   @Override

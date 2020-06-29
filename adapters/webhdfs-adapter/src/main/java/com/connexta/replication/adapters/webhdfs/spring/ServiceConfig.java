@@ -24,18 +24,19 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 @Configuration("webhdfs-adapter")
 public class ServiceConfig {
 
-    /**
-     * Instantiates a {@link WebHdfsNodeAdapterFactory} bean.
-     *
-     * @param replicationProperties application properties containing the timeouts for any client this
-     *     factory creates
-     * @return A factory for creating {@link WebHdfsNodeAdapter}s
-     */
-    @Bean
-    public WebHdfsNodeAdapterFactory webHdfsNodeAdapterFactory(ReplicationProperties replicationProperties) {
-        return new WebHdfsNodeAdapterFactory(
-                new SimpleClientHttpRequestFactory(),
-                replicationProperties.getConnectionTimeout(),
-                replicationProperties.getReceiveTimeout());
-    }
+  /**
+   * Instantiates a {@link WebHdfsNodeAdapterFactory} bean.
+   *
+   * @param replicationProperties application properties containing the timeouts for any client this
+   *     factory creates
+   * @return A factory for creating {@link WebHdfsNodeAdapter}s
+   */
+  @Bean
+  public WebHdfsNodeAdapterFactory webHdfsNodeAdapterFactory(
+      ReplicationProperties replicationProperties) {
+    return new WebHdfsNodeAdapterFactory(
+        new SimpleClientHttpRequestFactory(),
+        replicationProperties.getConnectionTimeout(),
+        replicationProperties.getReceiveTimeout());
+  }
 }
