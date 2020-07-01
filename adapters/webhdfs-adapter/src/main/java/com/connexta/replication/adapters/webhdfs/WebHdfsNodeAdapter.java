@@ -25,6 +25,8 @@ import com.connexta.replication.api.data.ResourceResponse;
 import com.connexta.replication.api.data.UpdateRequest;
 import com.connexta.replication.api.data.UpdateStorageRequest;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /** Interacts with a remote Hadoop instance through the webHDFS REST API */
 public class WebHdfsNodeAdapter implements NodeAdapter {
@@ -67,17 +72,23 @@ public class WebHdfsNodeAdapter implements NodeAdapter {
     return webHdfsUrl;
   }
 
+  URI getWebHdfsUri() throws URISyntaxException {
+    return webHdfsUrl.toURI();
+  }
+
   @Override
   public boolean isAvailable() {
     LOGGER.info("Checking access to: {}", getWebHdfsUrl());
 
-    Map<String, String> params = new HashMap<>();
-    params.put(HTTP_OPERATION_KEY, HTTP_OPERATION_CHECK_ACCESS);
-    params.put(HTTP_FILE_SYSTEM_ACTION_KEY, HTTP_FILE_SYSTEM_ACTION_ALL);
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add(HTTP_OPERATION_KEY, HTTP_OPERATION_CHECK_ACCESS);
+    params.add(HTTP_FILE_SYSTEM_ACTION_KEY, HTTP_FILE_SYSTEM_ACTION_ALL);
+
+    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(getWebHdfsUrl().toString()).queryParams(params);
 
     ResponseEntity<String> response =
         restOperations.exchange(
-            getWebHdfsUrl().toString(), HttpMethod.GET, null, String.class, params);
+            uriComponentsBuilder.toUriString(), HttpMethod.GET, null, String.class);
 
     if (response.getStatusCode() != HttpStatus.OK) {
       LOGGER.debug("Access to {} is not available.", getWebHdfsUrl());
@@ -89,7 +100,7 @@ public class WebHdfsNodeAdapter implements NodeAdapter {
 
   @Override
   public String getSystemName() {
-    return null;
+    return "webHDFS";
   }
 
   @Override
