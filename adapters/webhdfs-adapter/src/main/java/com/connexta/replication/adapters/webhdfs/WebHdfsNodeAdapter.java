@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -84,7 +82,8 @@ public class WebHdfsNodeAdapter implements NodeAdapter {
     params.add(HTTP_OPERATION_KEY, HTTP_OPERATION_CHECK_ACCESS);
     params.add(HTTP_FILE_SYSTEM_ACTION_KEY, HTTP_FILE_SYSTEM_ACTION_ALL);
 
-    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(getWebHdfsUrl().toString()).queryParams(params);
+    UriComponentsBuilder uriComponentsBuilder =
+        UriComponentsBuilder.fromHttpUrl(getWebHdfsUrl().toString()).queryParams(params);
 
     ResponseEntity<String> response =
         restOperations.exchange(
