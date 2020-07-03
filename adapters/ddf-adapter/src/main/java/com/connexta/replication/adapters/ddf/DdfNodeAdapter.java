@@ -34,6 +34,7 @@ import com.connexta.replication.api.data.ResourceRequest;
 import com.connexta.replication.api.data.ResourceResponse;
 import com.connexta.replication.api.data.UpdateRequest;
 import com.connexta.replication.api.data.UpdateStorageRequest;
+import com.connexta.replication.data.MetacardAttribute;
 import com.connexta.replication.data.QueryRequestImpl;
 import com.connexta.replication.data.QueryResponseImpl;
 import com.connexta.replication.data.ResourceImpl;

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.adapters.ddf.MetacardAttribute;
+import com.connexta.replication.data.MetacardAttribute;
 import com.connexta.replication.adapters.ddf.csw.Constants;
 import com.connexta.replication.adapters.ddf.csw.MetacardMarshaller;
 import com.connexta.replication.api.AdapterException;

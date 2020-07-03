@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.adapters.ddf.MetacardAttribute;
+import com.connexta.replication.data.MetacardAttribute;
 import com.connexta.replication.api.Replication;
 import com.connexta.replication.api.data.Metadata;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;

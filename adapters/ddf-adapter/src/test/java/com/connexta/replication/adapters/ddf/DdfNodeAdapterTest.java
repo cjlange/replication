@@ -33,6 +33,7 @@ import com.connexta.replication.api.data.Metadata;
 import com.connexta.replication.api.data.QueryRequest;
 import com.connexta.replication.api.data.QueryResponse;
 import com.connexta.replication.api.data.Resource;
+import com.connexta.replication.data.MetacardAttribute;
 import com.connexta.replication.data.QueryRequestImpl;
 import com.connexta.replication.data.ResourceImpl;
 import java.io.ByteArrayInputStream;

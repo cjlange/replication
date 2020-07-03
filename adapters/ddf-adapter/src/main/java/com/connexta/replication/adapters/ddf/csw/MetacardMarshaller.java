@@ -14,7 +14,7 @@
 package com.connexta.replication.adapters.ddf.csw;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.adapters.ddf.MetacardAttribute;
+import com.connexta.replication.data.MetacardAttribute;
 import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.Replication;
 import com.connexta.replication.api.data.Metadata;

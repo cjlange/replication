@@ -15,6 +15,7 @@ package com.connexta.replication.adapters.ddf;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
+import com.connexta.replication.data.MetacardAttribute;
 import com.connexta.replication.data.MetadataImpl;
 import java.util.Date;
 import java.util.Map;
