@@ -15,7 +15,7 @@ package com.connexta.replication.adapters.ddf;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-import com.connexta.replication.data.MetacardAttribute;
+import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.data.MetadataImpl;
 import java.util.Date;
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.Map;
  * support for the metacard attributes
  */
 public class DdfMetadata extends MetadataImpl {
-  private Map<String, MetacardAttribute> attributes;
+  private Map<String, MetadataAttribute> attributes;
   /**
    * @param metadata the raw metadata to wrap, cannot be null
    * @param type the type of the metadata, cannot be null
@@ -38,7 +38,7 @@ public class DdfMetadata extends MetadataImpl {
       Class type,
       String id,
       Date metadataModified,
-      Map<String, MetacardAttribute> attributes) {
+      Map<String, MetadataAttribute> attributes) {
     super(metadata, type, id, metadataModified);
     this.attributes = notNull(attributes);
   }
@@ -48,7 +48,7 @@ public class DdfMetadata extends MetadataImpl {
    *
    * @return the map of metacard attributes
    */
-  public Map<String, MetacardAttribute> getAttributes() {
+  public Map<String, MetadataAttribute> getAttributes() {
     return attributes;
   }
 }

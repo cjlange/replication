@@ -33,7 +33,7 @@ import com.connexta.replication.api.data.Metadata;
 import com.connexta.replication.api.data.QueryRequest;
 import com.connexta.replication.api.data.QueryResponse;
 import com.connexta.replication.api.data.Resource;
-import com.connexta.replication.data.MetacardAttribute;
+import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.data.QueryRequestImpl;
 import com.connexta.replication.data.ResourceImpl;
 import java.io.ByteArrayInputStream;
@@ -286,13 +286,13 @@ public class DdfNodeAdapterTest {
   }
 
   private Metadata getMetadata() {
-    Map<String, MetacardAttribute> map = new HashMap<>();
+    Map<String, MetadataAttribute> map = new HashMap<>();
 
-    map.put(Constants.METACARD_ID, new MetacardAttribute(Constants.METACARD_ID, null, "123456789"));
-    map.put("type", new MetacardAttribute("type", null, "ddf.metacard"));
+    map.put(Constants.METACARD_ID, new MetadataAttribute(Constants.METACARD_ID, null, "123456789"));
+    map.put("type", new MetadataAttribute("type", null, "ddf.metacard"));
     map.put(
-        Constants.METACARD_TAGS, new MetacardAttribute(Constants.METACARD_TAGS, "string", "tag"));
-    map.put("title", new MetacardAttribute("title", null, "mytitle"));
+        Constants.METACARD_TAGS, new MetadataAttribute(Constants.METACARD_TAGS, "string", "tag"));
+    map.put("title", new MetadataAttribute("title", null, "mytitle"));
 
     return new DdfMetadata(
         RAW_METADATA, String.class, UUID.randomUUID().toString(), new Date(), map);

@@ -34,7 +34,7 @@ import com.connexta.replication.api.data.ResourceRequest;
 import com.connexta.replication.api.data.ResourceResponse;
 import com.connexta.replication.api.data.UpdateRequest;
 import com.connexta.replication.api.data.UpdateStorageRequest;
-import com.connexta.replication.data.MetacardAttribute;
+import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.data.QueryRequestImpl;
 import com.connexta.replication.data.QueryResponseImpl;
 import com.connexta.replication.data.ResourceImpl;
@@ -354,14 +354,14 @@ public class DdfNodeAdapter implements NodeAdapter {
     Map metadataMap = ddfMetadata.getAttributes();
     metadataMap.put(
         Constants.METACARD_TAGS,
-        new MetacardAttribute(
+        new MetadataAttribute(
             Constants.METACARD_TAGS,
             "string",
             new ArrayList(metadata.getTags()),
             Collections.emptyList()));
     metadataMap.put(
         Replication.ORIGINS,
-        new MetacardAttribute(
+        new MetadataAttribute(
             Replication.ORIGINS, "string", metadata.getLineage(), Collections.emptyList()));
     return ddfMetadata;
   }

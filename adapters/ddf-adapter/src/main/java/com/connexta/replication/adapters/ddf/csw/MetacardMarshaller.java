@@ -14,7 +14,7 @@
 package com.connexta.replication.adapters.ddf.csw;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.data.MetacardAttribute;
+import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.Replication;
 import com.connexta.replication.api.data.Metadata;
@@ -191,7 +191,7 @@ public class MetacardMarshaller {
     }
   }
 
-  public static @Nullable Date convertToDate(@Nullable MetacardAttribute value) {
+  public static @Nullable Date convertToDate(@Nullable MetadataAttribute value) {
     if (value == null) {
       return null;
     }
@@ -219,10 +219,10 @@ public class MetacardMarshaller {
   private static DdfMetadata createMetadataFromMetacardRecord(
       String metadataStr, HierarchicalStreamReader reader, Map<String, String> xmlns) {
 
-    Map<String, MetacardAttribute> metadataMap = new HashMap<>();
+    Map<String, MetadataAttribute> metadataMap = new HashMap<>();
     metadataMap.put(
         Constants.RAW_METADATA_KEY,
-        new MetacardAttribute(Constants.RAW_METADATA_KEY, null, metadataStr));
+        new MetadataAttribute(Constants.RAW_METADATA_KEY, null, metadataStr));
     Iterator<String> attributeNames = reader.getAttributeNames();
     while (attributeNames.hasNext()) {
       String name = attributeNames.next();
@@ -238,7 +238,7 @@ public class MetacardMarshaller {
             .findFirst()
             .orElse("gml");
     String id = reader.getAttribute(gmlNs + ":id");
-    metadataMap.put(Constants.METACARD_ID, new MetacardAttribute(Constants.METACARD_ID, null, id));
+    metadataMap.put(Constants.METACARD_ID, new MetadataAttribute(Constants.METACARD_ID, null, id));
     // If we want to grab the type we will have to do so below. As you move through the child nodes
     // check if the node name is type and save the value.
 
@@ -283,14 +283,14 @@ public class MetacardMarshaller {
     metadataMap
         .getOrDefault(
             Constants.METACARD_TAGS,
-            new MetacardAttribute(Constants.METACARD_TAGS, "string", Constants.DEFAULT_TAG))
+            new MetadataAttribute(Constants.METACARD_TAGS, "string", Constants.DEFAULT_TAG))
         .getValues()
         .forEach(metadata::addTag);
-    MetacardAttribute origin = metadataMap.get(Replication.ORIGINS);
+    MetadataAttribute origin = metadataMap.get(Replication.ORIGINS);
     if (origin != null) {
       origin.getValues().forEach(metadata::addLineage);
     }
-    MetacardAttribute versionAction = metadataMap.get(Constants.ACTION);
+    MetadataAttribute versionAction = metadataMap.get(Constants.ACTION);
     if (versionAction != null) {
       metadata.setIsDeleted(versionAction.getValue().startsWith("Deleted"));
     }
@@ -301,7 +301,7 @@ public class MetacardMarshaller {
   }
 
   private static void parseToMap(
-      HierarchicalStreamReader reader, Map<String, MetacardAttribute> metadataMap) {
+      HierarchicalStreamReader reader, Map<String, MetadataAttribute> metadataMap) {
     while (reader.hasMoreChildren()) {
       reader.moveDown();
 
@@ -315,7 +315,7 @@ public class MetacardMarshaller {
         }
       }
       if (!reader.hasMoreChildren()) {
-        metadataMap.put(entryType, new MetacardAttribute(entryType, null, reader.getValue()));
+        metadataMap.put(entryType, new MetadataAttribute(entryType, null, reader.getValue()));
         reader.moveUp();
         continue;
       }
@@ -327,7 +327,7 @@ public class MetacardMarshaller {
         copyXml(reader, xmlWriter, null);
         metadataMap.put(
             attributeName,
-            new MetacardAttribute(
+            new MetadataAttribute(
                 attributeName, entryType, Collections.singletonList(xmlWriter.toString()), xmlns));
         reader.moveUp();
         reader.moveUp();
@@ -344,7 +344,7 @@ public class MetacardMarshaller {
       LOGGER.trace("attribute name: {} value: {}.", attributeName, values);
       if (StringUtils.isNotEmpty(attributeName) && !values.isEmpty()) {
         metadataMap.put(
-            attributeName, new MetacardAttribute(attributeName, entryType, values, xmlns));
+            attributeName, new MetadataAttribute(attributeName, entryType, values, xmlns));
       }
 
       reader.moveUp();
@@ -353,7 +353,7 @@ public class MetacardMarshaller {
 
   public static String marshal(Metadata metadata) {
     EscapingPrintWriter writer = new EscapingPrintWriter(new StringWriter(1024));
-    Map<String, MetacardAttribute> attributes = getAttributeMap(metadata);
+    Map<String, MetadataAttribute> attributes = getAttributeMap(metadata);
     writer.startNode("metacard");
     for (Map.Entry<String, String> nsRow : NAMESPACE_MAP.entrySet()) {
       writer.addAttribute(nsRow.getKey(), nsRow.getValue());
@@ -375,19 +375,19 @@ public class MetacardMarshaller {
       writer.endNode(); // source
     }
 
-    for (MetacardAttribute metacardAttribute : attributes.values()) {
-      String attributeName = metacardAttribute.getName();
+    for (MetadataAttribute metadataAttribute : attributes.values()) {
+      String attributeName = metadataAttribute.getName();
       if (attributeName.equals(Constants.METACARD_ID)
           || attributeName.equals(Constants.RAW_METADATA_KEY)) {
         continue;
       }
-      writeAttributeToXml(writer, metacardAttribute);
+      writeAttributeToXml(writer, metadataAttribute);
     }
     writer.endNode(); // metacard
     return writer.makeString();
   }
 
-  private static Map<String, MetacardAttribute> getAttributeMap(Metadata metadata) {
+  private static Map<String, MetadataAttribute> getAttributeMap(Metadata metadata) {
     if (!(metadata instanceof DdfMetadata)) {
       throw new AdapterException(
           "Metadata type " + metadata.getClass() + " is incompatible with the DDF adapter");
@@ -395,7 +395,7 @@ public class MetacardMarshaller {
     return ((DdfMetadata) metadata).getAttributes();
   }
 
-  private static void writeAttributeToXml(EscapingPrintWriter writer, MetacardAttribute attribute) {
+  private static void writeAttributeToXml(EscapingPrintWriter writer, MetadataAttribute attribute) {
     String attributeName = attribute.getName();
     List<String> values = attribute.getValues();
     String format = attribute.getType();

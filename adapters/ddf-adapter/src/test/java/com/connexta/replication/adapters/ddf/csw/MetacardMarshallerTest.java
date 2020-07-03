@@ -19,7 +19,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.data.MetacardAttribute;
+import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.Replication;
 import com.connexta.replication.api.data.Metadata;
@@ -47,63 +47,63 @@ public class MetacardMarshallerTest {
   private static final String minimalMetacardXml =
       "<metacard xmlns=\"urn:catalog:metacard\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:smil=\"http://www.w3.org/2001/SMIL20/\" xmlns:smillang=\"http://www.w3.org/2001/SMIL20/Language\" gml:id=\"123456789\">\n  <type>ddf.metacard</type>\n</metacard>";
 
-  private Map<String, MetacardAttribute> map;
+  private Map<String, MetadataAttribute> map;
 
   @Before
   public void setUp() throws Exception {
     map = new HashMap<>();
-    map.put(Constants.METACARD_ID, new MetacardAttribute(Constants.METACARD_ID, null, "123456789"));
-    map.put("type", new MetacardAttribute("type", null, "my-type"));
-    map.put("source", new MetacardAttribute("source", null, "source-id"));
+    map.put(Constants.METACARD_ID, new MetadataAttribute(Constants.METACARD_ID, null, "123456789"));
+    map.put("type", new MetadataAttribute("type", null, "my-type"));
+    map.put("source", new MetadataAttribute("source", null, "source-id"));
     map.put(
-        Constants.METACARD_TAGS, new MetacardAttribute(Constants.METACARD_TAGS, "string", "tag"));
+        Constants.METACARD_TAGS, new MetadataAttribute(Constants.METACARD_TAGS, "string", "tag"));
     map.put(
         Constants.METACARD_MODIFIED,
-        new MetacardAttribute(Constants.METACARD_MODIFIED, "date", "1234-01-02T03:04:05.060"));
+        new MetadataAttribute(Constants.METACARD_MODIFIED, "date", "1234-01-02T03:04:05.060"));
     map.put(
         "location",
-        new MetacardAttribute(
+        new MetadataAttribute(
             "location",
             "geometry",
             Collections.singletonList("<ns2:point>123,456</ns2:point>"),
             Collections.singletonList("xmlns:ns2=http://some/namespace")));
-    map.put(Replication.ORIGINS, new MetacardAttribute(Replication.ORIGINS, "string", "otherhost"));
+    map.put(Replication.ORIGINS, new MetadataAttribute(Replication.ORIGINS, "string", "otherhost"));
     map.put(
-        Constants.RESOURCE_URI, new MetacardAttribute(Constants.RESOURCE_URI, "string", "my:uri"));
+        Constants.RESOURCE_URI, new MetadataAttribute(Constants.RESOURCE_URI, "string", "my:uri"));
     map.put(
-        Constants.RESOURCE_SIZE, new MetacardAttribute(Constants.RESOURCE_SIZE, "long", "1234"));
+        Constants.RESOURCE_SIZE, new MetadataAttribute(Constants.RESOURCE_SIZE, "long", "1234"));
     map.put(
         Constants.MODIFIED,
-        new MetacardAttribute(Constants.MODIFIED, "date", "1234-01-01T03:04:05.060"));
+        new MetadataAttribute(Constants.MODIFIED, "date", "1234-01-01T03:04:05.060"));
     map.put(
         Constants.DERIVED_RESOURCE_URI,
-        new MetacardAttribute(Constants.DERIVED_RESOURCE_URI, "string", "my:derived:uri"));
+        new MetadataAttribute(Constants.DERIVED_RESOURCE_URI, "string", "my:derived:uri"));
     map.put(
         Constants.DERIVED_RESOURCE_DOWNLOAD_URL,
-        new MetacardAttribute(
+        new MetadataAttribute(
             Constants.DERIVED_RESOURCE_DOWNLOAD_URL, "string", "http://host/path"));
   }
 
   @Test
   public void marshal() {
-    Map<String, MetacardAttribute> map = new HashMap<>();
+    Map<String, MetadataAttribute> map = new HashMap<>();
 
-    map.put(Constants.METACARD_ID, new MetacardAttribute(Constants.METACARD_ID, null, "123456789"));
-    map.put("type", new MetacardAttribute("type", null, "my-type"));
-    map.put("source", new MetacardAttribute("source", null, "source-id"));
+    map.put(Constants.METACARD_ID, new MetadataAttribute(Constants.METACARD_ID, null, "123456789"));
+    map.put("type", new MetadataAttribute("type", null, "my-type"));
+    map.put("source", new MetadataAttribute("source", null, "source-id"));
     map.put(
-        Constants.METACARD_TAGS, new MetacardAttribute(Constants.METACARD_TAGS, "string", "tag"));
+        Constants.METACARD_TAGS, new MetadataAttribute(Constants.METACARD_TAGS, "string", "tag"));
     map.put(
         "location",
-        new MetacardAttribute(
+        new MetadataAttribute(
             "location",
             "geometry",
             Collections.singletonList("<ns2:point>123,456</ns2:point>"),
             Collections.singletonList("xmlns:ns2=http://some/namespace")));
     map.put(
         "metadata",
-        new MetacardAttribute("metadata", "stringxml", "<test><data>testing</data></test>"));
-    map.put("not-marshaled", new MetacardAttribute("not-marshaled", null, "not-marshaled-value"));
+        new MetadataAttribute("metadata", "stringxml", "<test><data>testing</data></test>"));
+    map.put("not-marshaled", new MetadataAttribute("not-marshaled", null, "not-marshaled-value"));
 
     String metacardxml =
         MetacardMarshaller.marshal(
@@ -139,7 +139,7 @@ public class MetacardMarshallerTest {
             ISODateTimeFormat.dateOptionalTimeParser()
                 .parseDateTime("1234-01-01T03:04:05.060")
                 .toDate()));
-    Map<String, MetacardAttribute> map = metadata.getAttributes();
+    Map<String, MetadataAttribute> map = metadata.getAttributes();
     assertThat(map.containsKey(Constants.DERIVED_RESOURCE_URI), is(false));
     assertThat(map.containsKey(Constants.DERIVED_RESOURCE_DOWNLOAD_URL), is(false));
     assertThat(map.get("location").getValue(), is("<ns2:point>123,456</ns2:point>"));
@@ -148,23 +148,23 @@ public class MetacardMarshallerTest {
 
   @Test
   public void marshalNoType() {
-    Map<String, MetacardAttribute> map = new HashMap<>();
+    Map<String, MetadataAttribute> map = new HashMap<>();
 
-    map.put(Constants.METACARD_ID, new MetacardAttribute(Constants.METACARD_ID, null, "123456789"));
-    map.put("source", new MetacardAttribute("source", null, "source-id"));
+    map.put(Constants.METACARD_ID, new MetadataAttribute(Constants.METACARD_ID, null, "123456789"));
+    map.put("source", new MetadataAttribute("source", null, "source-id"));
     map.put(
-        Constants.METACARD_TAGS, new MetacardAttribute(Constants.METACARD_TAGS, "string", "tag"));
+        Constants.METACARD_TAGS, new MetadataAttribute(Constants.METACARD_TAGS, "string", "tag"));
     map.put(
         "location",
-        new MetacardAttribute(
+        new MetadataAttribute(
             "location",
             "geometry",
             Collections.singletonList("<ns2:point>123,456</ns2:point>"),
             Collections.singletonList("xmlns:ns2=http://some/namespace")));
     map.put(
         "metadata",
-        new MetacardAttribute("metadata", "stringxml", "<test><data>testing</data></test>"));
-    map.put("not-marshaled", new MetacardAttribute("not-marshaled", null, "not-marshaled-value"));
+        new MetadataAttribute("metadata", "stringxml", "<test><data>testing</data></test>"));
+    map.put("not-marshaled", new MetadataAttribute("not-marshaled", null, "not-marshaled-value"));
 
     String metacardxml =
         MetacardMarshaller.marshal(
@@ -176,11 +176,11 @@ public class MetacardMarshallerTest {
   public void unmarshalDeletedRecord() throws Exception {
     map.put(
         Constants.VERSIONED_ON,
-        new MetacardAttribute(Constants.VERSIONED_ON, "date", "1234-01-01T01:04:05.060"));
+        new MetadataAttribute(Constants.VERSIONED_ON, "date", "1234-01-01T01:04:05.060"));
     map.put(
         Constants.VERSION_OF_ID,
-        new MetacardAttribute(Constants.VERSION_OF_ID, "string", "987654321"));
-    map.put(Constants.ACTION, new MetacardAttribute(Constants.ACTION, "string", "Deleted"));
+        new MetadataAttribute(Constants.VERSION_OF_ID, "string", "987654321"));
+    map.put(Constants.ACTION, new MetadataAttribute(Constants.ACTION, "string", "Deleted"));
 
     String metacardXml =
         MetacardMarshaller.marshal(
@@ -245,14 +245,14 @@ public class MetacardMarshallerTest {
                 String.class,
                 "123456789",
                 new Date(1),
-                new HashMap<String, MetacardAttribute>()));
+                new HashMap<String, MetadataAttribute>()));
     assertThat(metacardxml, is(minimalMetacardXml));
   }
 
   @Test
   public void convertToDateBadFormat() {
     assertThat(
-        MetacardMarshaller.convertToDate(new MetacardAttribute("att", "string", "notadate")),
+        MetacardMarshaller.convertToDate(new MetadataAttribute("att", "string", "notadate")),
         is(nullValue()));
   }
 
