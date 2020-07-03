@@ -14,7 +14,6 @@
 package com.connexta.replication.adapters.webhdfs.filesystem;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.Date;
 
 /** Represents a FileStatus JSON object received through an HTTP GET request */
@@ -139,7 +138,7 @@ public class FileStatus {
   }
 
   @JsonIgnore
-  public boolean isDirectory() {
-    return getType().equals("DIRECTORY");
+  public boolean isFile() {
+    return getType().equals("FILE");
   }
 }
