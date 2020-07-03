@@ -19,9 +19,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.api.Replication;
 import com.connexta.replication.api.data.Metadata;
+import com.connexta.replication.data.MetadataAttribute;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.xml.XppReader;

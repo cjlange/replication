@@ -21,12 +21,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.adapters.ddf.csw.Constants;
 import com.connexta.replication.adapters.ddf.csw.MetacardMarshaller;
 import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.data.Metadata;
 import com.connexta.replication.api.data.Resource;
+import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.data.ResourceImpl;
 import java.io.ByteArrayInputStream;
 import java.net.URI;

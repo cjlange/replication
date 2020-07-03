@@ -14,10 +14,10 @@
 package com.connexta.replication.adapters.ddf.csw;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.Replication;
 import com.connexta.replication.api.data.Metadata;
+import com.connexta.replication.data.MetadataAttribute;
 import com.google.common.collect.ImmutableMap;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;

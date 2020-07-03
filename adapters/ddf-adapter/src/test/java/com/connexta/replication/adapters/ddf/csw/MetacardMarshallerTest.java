@@ -19,10 +19,10 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 
 import com.connexta.replication.adapters.ddf.DdfMetadata;
-import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.api.AdapterException;
 import com.connexta.replication.api.Replication;
 import com.connexta.replication.api.data.Metadata;
+import com.connexta.replication.data.MetadataAttribute;
 import com.connexta.replication.data.MetadataImpl;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.xml.XppReader;
