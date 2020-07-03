@@ -14,7 +14,6 @@
 package com.connexta.replication.adapters.webhdfs.filesystem;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 /** Represents a FileStatuses JSON object received through an HTTP GET request */
