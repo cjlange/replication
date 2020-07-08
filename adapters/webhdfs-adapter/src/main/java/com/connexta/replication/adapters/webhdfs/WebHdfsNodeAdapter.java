@@ -149,6 +149,7 @@ public class WebHdfsNodeAdapter implements NodeAdapter {
     List<Metadata> results = new ArrayList<>();
 
     for (FileStatus file : filesToReplicate) {
+      // TODO: 7/3/20 Need approach for when consuming data from HDFS into Ion
       results.add(createMetadata(file));
     }
 
